@@ -51,7 +51,7 @@ jobs:
     steps:
       - attach_project
       - run:
-          name: Typecheck files
+          name: Type check files
           command: |
             yarn typescript
 
