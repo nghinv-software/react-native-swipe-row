@@ -26,6 +26,12 @@ or
 npm install @nghinv/react-native-swipe-row
 ```
 
+- peerDependencies
+
+```sh
+yarn add react-native-gesture-handler react-native-reanimated @nghinv/react-native-icons
+```
+
 ## Usage
 
 ```js
@@ -108,6 +114,10 @@ export default App;
 | onPress | `() => void` | `undefined` |  |
 | backgroundColor | `string` | `undefined` |  |
 
+---
+## Credits
+
+- [@Nghi-NV](https://github.com/Nghi-NV)
 
 [version-badge]: https://img.shields.io/npm/v/@nghinv/react-native-swipe-row.svg?style=flat-square
 [package]: https://www.npmjs.com/package/@nghinv/react-native-swipe-row

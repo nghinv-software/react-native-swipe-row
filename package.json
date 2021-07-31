@@ -1,6 +1,6 @@
 {
   "name": "@nghinv/react-native-swipe-row",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "React Native Swipe Row Library",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -37,9 +37,7 @@
   },
   "homepage": "https://github.com/nghinv-software/react-native-swipe-row#readme",
   "publishConfig": {
-    "access": "public",
-    "cache": "~/.npm",
-    "registry": "https://npm.pkg.github.com"
+    "access": "public"
   },
   "devDependencies": {
     "@commitlint/config-conventional": "^11.0.0",
@@ -64,13 +62,13 @@
   },
   "peerDependencies": {
     "react": "*",
-    "react-native": "*"
-  },
-  "dependencies": {
-    "react-fast-compare": "*",
+    "react-native": "*",
     "@nghinv/react-native-icons": "^1.0.5",
     "react-native-gesture-handler": "*",
     "react-native-reanimated": ">=2.0.0-rc.0"
+  },
+  "dependencies": {
+    "react-fast-compare": "*"
   },
   "jest": {
     "preset": "react-native",
