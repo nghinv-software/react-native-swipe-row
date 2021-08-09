@@ -3,18 +3,43 @@
  * Copyright (c) 2021 nghinv@lumi.biz
  */
 
-import React, { forwardRef, useRef, useCallback, useImperativeHandle } from 'react';
-import { View, StyleSheet, TouchableOpacity, ViewStyle, StyleProp, LayoutChangeEvent } from 'react-native';
-import { PanGestureHandler, PanGestureHandlerGestureEvent } from 'react-native-gesture-handler';
-import Animated, { Easing, useAnimatedGestureHandler, useAnimatedStyle, useSharedValue, withSpring, withTiming, runOnJS, useAnimatedReaction } from 'react-native-reanimated';
+import React, {
+  forwardRef,
+  useRef,
+  useCallback,
+  useImperativeHandle,
+} from 'react';
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  ViewStyle,
+  StyleProp,
+  LayoutChangeEvent,
+} from 'react-native';
+import {
+  PanGestureHandler,
+  PanGestureHandlerGestureEvent,
+} from 'react-native-gesture-handler';
+import Animated, {
+  Easing,
+  useAnimatedGestureHandler,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  withTiming,
+  runOnJS,
+  useAnimatedReaction,
+} from 'react-native-reanimated';
 import equals from 'react-fast-compare';
 import Button, { ActionType } from './Button';
 
-type ButtonComponentProps = React.ElementType & (typeof TouchableOpacity | typeof View);
+type ButtonComponentProps = React.ElementType &
+  (typeof TouchableOpacity | typeof View);
 
 type ContextX = {
   x: number;
-}
+};
 
 export const State = {
   left: -1,
@@ -44,7 +69,7 @@ interface SwipeRowProps {
 export const snapPoint = (
   value: number,
   velocity: number,
-  points: ReadonlyArray<number>,
+  points: ReadonlyArray<number>
 ): number => {
   'worklet';
 
@@ -88,7 +113,8 @@ function SwipeRow(props: SwipeRowProps, ref: React.Ref<any>) {
     accessibilityLabel,
     rowIndex = -1,
   } = props;
-  const ButtonComponent: ButtonComponentProps = (disabled || !onPress) ? View : TouchableOpacity;
+  const ButtonComponent: ButtonComponentProps =
+    disabled || !onPress ? View : TouchableOpacity;
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const activeRow = props.activeRow || useSharedValue(-1);
   const translateX = useSharedValue(0);
@@ -99,7 +125,9 @@ function SwipeRow(props: SwipeRowProps, ref: React.Ref<any>) {
     height: useSharedValue(0),
   };
   const state = useSharedValue(State.normal);
-  const swipeEnable = !disabled && ((left?.length as number) > 0 || (right?.length as number) > 0);
+  const swipeEnable =
+    !disabled &&
+    ((left?.length as number) > 0 || (right?.length as number) > 0);
   const snapPoints: Array<number> = [0];
   if (left?.length && left.length > 0) {
     const translateWith = left.length * buttonWidth;
@@ -154,15 +182,21 @@ function SwipeRow(props: SwipeRowProps, ref: React.Ref<any>) {
     onSwipe?.(value);
   };
 
-  useAnimatedReaction(() => {
-    return activeRow.value;
-  }, (newValue) => {
-    if (newValue !== -1 && newValue !== rowIndex) {
-      runOnJS(closeRow)();
+  useAnimatedReaction(
+    () => {
+      return activeRow.value;
+    },
+    (newValue) => {
+      if (newValue !== -1 && newValue !== rowIndex) {
+        runOnJS(closeRow)();
+      }
     }
-  });
+  );
 
-  const onGestureEvent = useAnimatedGestureHandler<PanGestureHandlerGestureEvent, ContextX>({
+  const onGestureEvent = useAnimatedGestureHandler<
+    PanGestureHandlerGestureEvent,
+    ContextX
+  >({
     onStart: (_, ctx) => {
       activeRow.value = rowIndex;
       ctx.x = translateX.value;
@@ -179,22 +213,29 @@ function SwipeRow(props: SwipeRowProps, ref: React.Ref<any>) {
         return;
       }
 
+      // eslint-disable-next-line prettier/prettier
       state.value = nextTranslate > 0 ? State.swipeLeft : nextTranslate < 0 ? State.swipeRight : State.swipeNormal;
 
       if (nextTranslate > maxTranslateX.current) {
-        translateX.value = maxTranslateX.current + (nextTranslate - maxTranslateX.current) * 0.1;
+        translateX.value =
+          maxTranslateX.current + (nextTranslate - maxTranslateX.current) * 0.1;
       } else if (nextTranslate < minTranslateX.current) {
-        translateX.value = minTranslateX.current + (nextTranslate - minTranslateX.current) * 0.1;
+        translateX.value =
+          minTranslateX.current + (nextTranslate - minTranslateX.current) * 0.1;
       } else {
         translateX.value = nextTranslate;
       }
     },
     onFinish: (event) => {
       let snapTo = snapPoint(translateX.value, event.velocityX, snapPoints);
-      if ((state.value === State.swipeLeft && snapTo < 0) || (state.value === State.swipeRight && snapTo > 0)) {
+      if (
+        (state.value === State.swipeLeft && snapTo < 0) ||
+        (state.value === State.swipeRight && snapTo > 0)
+      ) {
         snapTo = 0;
       }
-      state.value = snapTo > 0 ? State.left : snapTo < 0 ? State.right : State.normal;
+      state.value =
+        snapTo > 0 ? State.left : snapTo < 0 ? State.right : State.normal;
 
       translateX.value = withSpring(snapTo, springConfig(event.velocityX));
     },
@@ -202,14 +243,13 @@ function SwipeRow(props: SwipeRowProps, ref: React.Ref<any>) {
 
   const contentStyle = useAnimatedStyle(() => {
     return {
-      transform: [
-        { translateX: translateX.value },
-      ],
+      transform: [{ translateX: translateX.value }],
     };
   });
 
   const leftButtonStyle = useAnimatedStyle(() => {
-    const checkTranslate = translateX.value > 0 && state.value !== State.swipeRight;
+    const checkTranslate =
+      translateX.value > 0 && state.value !== State.swipeRight;
     return {
       left: 0,
       height: contentLayout.height.value,
@@ -218,7 +258,8 @@ function SwipeRow(props: SwipeRowProps, ref: React.Ref<any>) {
   });
 
   const rightButtonStyle = useAnimatedStyle(() => {
-    const checkTranslate = translateX.value < 0 && state.value !== State.swipeLeft;
+    const checkTranslate =
+      translateX.value < 0 && state.value !== State.swipeLeft;
     return {
       right: 0,
       height: contentLayout.height.value,
@@ -229,55 +270,40 @@ function SwipeRow(props: SwipeRowProps, ref: React.Ref<any>) {
   return (
     <View style={style}>
       <View style={styles.viewActions}>
-        {
-          left && (
-            <Animated.View
-              style={[
-                styles.button,
-                leftButtonStyle,
-              ]}
-            >
-              {
-                left?.reverse().map((content, index) => (
-                  <Button
-                    key={index}
-                    content={content}
-                    width={buttonWidth}
-                    index={left.length - index}
-                    translateX={translateX}
-                    length={left.length}
-                    maxTranslate={left.length * buttonWidth}
-                    type='left'
-                    onPress={() => onButtonPress(content)}
-                  />
-                ))
-              }
-            </Animated.View>
-          )
-        }
-        {
-          right && (
-            <Animated.View
-              style={[styles.button, rightButtonStyle]}
-            >
-              {
-                right?.map((content, index) => (
-                  <Button
-                    key={index}
-                    content={content}
-                    width={buttonWidth}
-                    index={right.length - index}
-                    translateX={translateX}
-                    length={right.length}
-                    maxTranslate={right.length * buttonWidth}
-                    type='right'
-                    onPress={() => onButtonPress(content)}
-                  />
-                ))
-              }
-            </Animated.View>
-          )
-        }
+        {left && (
+          <Animated.View style={[styles.button, leftButtonStyle]}>
+            {left?.reverse().map((content, index) => (
+              <Button
+                key={index}
+                content={content}
+                width={buttonWidth}
+                index={left.length - index}
+                translateX={translateX}
+                length={left.length}
+                maxTranslate={left.length * buttonWidth}
+                type="left"
+                onPress={() => onButtonPress(content)}
+              />
+            ))}
+          </Animated.View>
+        )}
+        {right && (
+          <Animated.View style={[styles.button, rightButtonStyle]}>
+            {right?.map((content, index) => (
+              <Button
+                key={index}
+                content={content}
+                width={buttonWidth}
+                index={right.length - index}
+                translateX={translateX}
+                length={right.length}
+                maxTranslate={right.length * buttonWidth}
+                type="right"
+                onPress={() => onButtonPress(content)}
+              />
+            ))}
+          </Animated.View>
+        )}
       </View>
       <PanGestureHandler
         enabled={swipeEnable}
@@ -289,14 +315,10 @@ function SwipeRow(props: SwipeRowProps, ref: React.Ref<any>) {
           onLayout={onLayout}
           testID={testID}
           accessibilityLabel={accessibilityLabel}
-          style={[
-            { opacity: disabled ? 0.6 : 1 },
-            contentStyle,
-          ]}
+          // eslint-disable-next-line react-native/no-inline-styles
+          style={[{ opacity: disabled ? 0.6 : 1 }, contentStyle]}
         >
-          <ButtonComponent onPress={onPressRow}>
-            {children}
-          </ButtonComponent>
+          <ButtonComponent onPress={onPressRow}>{children}</ButtonComponent>
         </Animated.View>
       </PanGestureHandler>
     </View>
@@ -304,9 +326,7 @@ function SwipeRow(props: SwipeRowProps, ref: React.Ref<any>) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-
-  },
+  container: {},
   viewActions: {
     ...StyleSheet.absoluteFillObject,
   },
