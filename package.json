@@ -1,6 +1,6 @@
 {
   "name": "@nghinv/react-native-swipe-row",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "React Native Swipe Row Library",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -65,12 +65,12 @@
   "peerDependencies": {
     "react": "*",
     "react-native": "*",
-    "react-native-gesture-handler": "*",
-    "react-native-reanimated": ">=2.0.0-rc.0"
+    "react-native-gesture-handler": "*"
   },
   "dependencies": {
     "react-fast-compare": "*",
-    "@nghinv/react-native-icons": ">=1.0.6"
+    "@nghinv/react-native-icons": ">=1.0.6",
+    "react-native-reanimated": ">=0.2.0"
   },
   "jest": {
     "preset": "react-native",
