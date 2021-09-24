@@ -62,6 +62,7 @@ interface SwipeRowProps {
   activeRow?: Animated.SharedValue<number>;
   rowIndex?: number;
   disabled?: boolean;
+  disabledOpacity?: number;
   testID?: string;
   accessibilityLabel?: string;
 }
@@ -112,6 +113,7 @@ function SwipeRow(props: SwipeRowProps, ref: React.Ref<any>) {
     testID,
     accessibilityLabel,
     rowIndex = -1,
+    disabledOpacity = 0.6,
   } = props;
   const ButtonComponent: ButtonComponentProps =
     disabled || !onPress ? View : TouchableOpacity;
@@ -316,7 +318,7 @@ function SwipeRow(props: SwipeRowProps, ref: React.Ref<any>) {
           testID={testID}
           accessibilityLabel={accessibilityLabel}
           // eslint-disable-next-line react-native/no-inline-styles
-          style={[{ opacity: disabled ? 0.6 : 1 }, contentStyle]}
+          style={[{ opacity: disabled ? disabledOpacity : 1 }, contentStyle]}
         >
           <ButtonComponent onPress={onPressRow}>{children}</ButtonComponent>
         </Animated.View>
